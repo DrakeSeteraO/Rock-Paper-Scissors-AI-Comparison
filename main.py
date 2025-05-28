@@ -3,12 +3,19 @@ import random
 class RockPaperScissorObject:
     def __init__(self):
         self.wins = 0
+        self.draws = 0
+        self.losses = 0
         self.games_played = 0
 
     def play(self, previous, reset = False):
         self.games_played += 1
         if previous == 1:
             self.wins += 1
+        elif previous == 0:
+            self.draws += 1
+        else:
+            self.losses += 1
+            
         if reset:
             self.games_played -= 1
         return 0
@@ -20,7 +27,7 @@ class RockPaperScissorObject:
         return f"{self.wins/self.games_played * 100} %"
 
     def print(self):
-        output = self.name() + ' ' * (17 - len(self.name())) + str(self.wins) + ' ' * (10 - len(str(self.wins))) + str(self.get_win_rate())
+        output = self.name() + ' ' * (20 - len(self.name())) + str(self.wins) + ' ' * (10 - len(str(self.wins))) + str(self.draws) + ' ' * (10 - len(str(self.draws))) + str(self.losses) + ' ' * (10 - len(str(self.losses))) + str(self.get_win_rate())
         print(output)
 
 
@@ -125,6 +132,17 @@ class Rotate(RockPaperScissorObject):
         super().play(previous, reset)
         self.previous = (self.previous + 1) % 3
         return self.previous
+    
+
+class Rotate_Reverse(RockPaperScissorObject):
+    def __init__(self):
+        super().__init__()
+        self.previous = 0
+    
+    def play(self, previous, reset=False):
+        super().play(previous, reset)
+        self.previous = (self.previous - 1) % 3
+        return self.previous
 
 
 
@@ -175,7 +193,7 @@ def compare_wins(AI: list[RockPaperScissorObject]):
     return wins_dict, wins_amount
 
 def display_results(wins_dict: dict, wins_amount: list[RockPaperScissorObject]):
-    output = 'Name' + ' ' * (17 - len('Name')) + 'Wins' + ' ' * (10 - len('Wins')) + 'Win percentage'
+    output = 'Name' + ' ' * (20 - len('Name')) + 'Wins' + ' ' * (10 - len('Wins')) + 'Draws' + ' ' * (10 - len('Draws')) + 'Losses' + ' ' * (10 - len('Losses')) + 'Win percentage'
     print(output)
     for x in wins_amount:
         for y in wins_dict[x]:
@@ -183,9 +201,9 @@ def display_results(wins_dict: dict, wins_amount: list[RockPaperScissorObject]):
 
 
 def main():
-    AI = [Rock(),Paper(),Scissor(),Random(),Beat_Most_Common(),Tit_for_Tat(),Rotate()]
+    AI = [Rock(),Paper(),Scissor(),Random(),Beat_Most_Common(),Tit_for_Tat(),Rotate(),Rotate_Reverse()]
 
-    amount = 10000
+    amount = 1000
 
     run_competition(AI, amount)
     wins_dict, wins_amount = compare_wins(AI)
